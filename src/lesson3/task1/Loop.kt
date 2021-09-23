@@ -74,7 +74,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun digitNumber(n: Int): Int = if(n < 10) 1 else 1 + digitNumber(n / 10)
+fun digitNumber(n: Int): Int = if(kotlin.math.abs(n) < 10) 1 else 1 + digitNumber(n / 10)
 
 /**
  * Простая (2 балла)
@@ -264,21 +264,21 @@ fun sin(x: Double, eps: Double): Double {
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
 fun cos(x: Double, eps: Double): Double {
-    var sinAccuracy = 1.0 + eps
+    var cosAccuracy = 1.0 + eps
     val xpi = x / kotlin.math.PI
     val x2 = if (xpi % 2 == 0.0) 0.0 else if (xpi % 1 == 0.0) kotlin.math.PI else x
-    var sinCalculated = 1.0
+    var cosCalculated = 1.0
     var xPower = 1.0
     var xFactorial: BigInteger = BigInteger.valueOf(1)
     var n = 0
-    while (kotlin.math.abs(sinAccuracy) >= eps) {
+    while (kotlin.math.abs(cosAccuracy) >= eps) {
         xPower = -xPower * x2 * x2
         xFactorial *= ((n + 1) * (n + 2)).toBigInteger()
         n += 2
-        sinAccuracy = xPower / xFactorial.toDouble()
-        sinCalculated += sinAccuracy
+        cosAccuracy = xPower / xFactorial.toDouble()
+        cosCalculated += cosAccuracy
     }
-    return sinCalculated
+    return cosCalculated
 }
 
 /**
@@ -292,27 +292,28 @@ fun cos(x: Double, eps: Double): Double {
  */
 fun squareSequenceDigit(n: Int): Int {
     var i = 1
-    var i2: Int
+    var i2: BigInteger
+    var ii2: BigInteger
     var j = 1
     var x = n
     if (x == 1) return 1 else x -= 1
     while (x > 0) {
         i++
-        i2 = i * i
+        i2 = (i * i).toBigInteger()
         j = 0
-        while (i2 > 0) {
-            i2 /= 10
+        while (i2 > 0.toBigInteger()) {
+            i2 /= 10.toBigInteger()
             j++
         }
         if (x > j) x -= j else {
-            j = i * i
-            while (j > 0) {
-                i2 = i2 * 10 + j % 10
-                j /= 10
+            ii2 = (i * i).toBigInteger()
+            while (ii2 > 0.toBigInteger()) {
+                i2 = i2 * 10.toBigInteger() + ii2 % 10.toBigInteger()
+                ii2 /= 10.toBigInteger()
             }
             while (x > 0) {
-                j = i2 % 10
-                i2 /= 10
+                j = (i2 % 10.toBigInteger()).toInt()
+                i2 /= 10.toBigInteger()
                 x--
             }
         }
@@ -330,32 +331,32 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var a = 1
-    var b = 1
-    var c: Int
+    var a: BigInteger = BigInteger.valueOf(1)
+    var b: BigInteger = BigInteger.valueOf(1)
+    var c: BigInteger
     var x = n
-    var i: Int
+    var i = 0
     if (x < 3) return 1 else x -= 2
     while (x > 0) {
         c = a + b
         a = b
         b = c
         i = 0
-        while (c > 0) {
-            c /= 10
+        while (c > 0.toBigInteger()) {
+            c /= 10.toBigInteger()
             i++
         }
         if (x > i) x -= i else {
-            while (b > 0) {
-                c = c * 10 + b % 10
-                b /= 10
+            while (b > 0.toBigInteger()) {
+                c = c * 10.toBigInteger() + b % 10.toBigInteger()
+                b /= 10.toBigInteger()
             }
             while (x > 0) {
-                a = c % 10
-                c /= 10
-                x--
+                i = (c % 10.toBigInteger()).toInt()
+                c /= 10.toBigInteger()
+                x --
             }
         }
     }
-    return a
+    return i
 }
