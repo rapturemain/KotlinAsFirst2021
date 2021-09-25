@@ -170,7 +170,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
     while (n1 != 0 && m1 != 0) {
         if (n1 > m1) n1 %= m1 else m1 %= n1
     }
-    return if (kotlin.math.max(m1, n1) == 1) true else false
+    return kotlin.math.max(m1, n1) == 1
 }
 
 /**
@@ -238,8 +238,9 @@ fun hasDifferentDigits(n: Int): Boolean {
  */
 fun sin(x: Double, eps: Double): Double {
     var sinAccuracy = 1.0 + eps
-    val xpi = x / kotlin.math.PI
-    val x2 = if (xpi % 2 == 0.0) 0.0 else if (xpi % 1 == 0.0) kotlin.math.PI else x
+    var x2 = x
+    val tPI = 2 * kotlin.math.PI
+    if (x2 > 0) while (x2 - tPI > 0) {x2 -= tPI} else while (x2 + tPI < 0) {x2 += tPI}
     var sinCalculated = x2
     var xPower = x2
     var xFactorial: BigInteger = BigInteger.valueOf(1)
@@ -265,8 +266,9 @@ fun sin(x: Double, eps: Double): Double {
  */
 fun cos(x: Double, eps: Double): Double {
     var cosAccuracy = 1.0 + eps
-    val xpi = x / kotlin.math.PI
-    val x2 = if (xpi % 2 == 0.0) 0.0 else if (xpi % 1 == 0.0) kotlin.math.PI else x
+    var x2 = x
+    val tPI = 2 * kotlin.math.PI
+    if (x2 > 0) while (x2 - tPI > 0) {x2 -= tPI} else while (x2 + tPI < 0) {x2 += tPI}
     var cosCalculated = 1.0
     var xPower = 1.0
     var xFactorial: BigInteger = BigInteger.valueOf(1)
