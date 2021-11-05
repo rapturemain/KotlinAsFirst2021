@@ -238,18 +238,16 @@ fun hasDifferentDigits(n: Int): Boolean {
  */
 fun sin(x: Double, eps: Double): Double {
     var sinAccuracy = 1.0 + eps
-    var x2 = x
-    val tPI = 2 * kotlin.math.PI
-    if (x2 > 0) while (x2 - tPI > 0) {x2 -= tPI} else while (x2 + tPI < 0) {x2 += tPI}
+    val x2 = x % (2 * kotlin.math.PI)
     var sinCalculated = x2
     var xPower = x2
-    var xFactorial: BigInteger = BigInteger.valueOf(1)
+    var xFactorial = 1.0
     var n = 1
     while (kotlin.math.abs(sinAccuracy) >= eps) {
         xPower = -xPower * x2 * x2
-        xFactorial *= ((n + 1) * (n + 2)).toBigInteger()
+        xFactorial *= (n + 1) * (n + 2)
         n += 2
-        sinAccuracy = xPower / xFactorial.toDouble()
+        sinAccuracy = xPower / xFactorial
         sinCalculated += sinAccuracy
     }
     return sinCalculated
@@ -266,18 +264,16 @@ fun sin(x: Double, eps: Double): Double {
  */
 fun cos(x: Double, eps: Double): Double {
     var cosAccuracy = 1.0 + eps
-    var x2 = x
-    val tPI = 2 * kotlin.math.PI
-    if (x2 > 0) while (x2 - tPI > 0) {x2 -= tPI} else while (x2 + tPI < 0) {x2 += tPI}
+    val x2 = x % (2 * kotlin.math.PI)
     var cosCalculated = 1.0
     var xPower = 1.0
-    var xFactorial: BigInteger = BigInteger.valueOf(1)
+    var xFactorial = 1.0
     var n = 0
     while (kotlin.math.abs(cosAccuracy) >= eps) {
         xPower = -xPower * x2 * x2
-        xFactorial *= ((n + 1) * (n + 2)).toBigInteger()
+        xFactorial *= (n + 1) * (n + 2)
         n += 2
-        cosAccuracy = xPower / xFactorial.toDouble()
+        cosAccuracy = xPower / xFactorial
         cosCalculated += cosAccuracy
     }
     return cosCalculated
@@ -294,28 +290,28 @@ fun cos(x: Double, eps: Double): Double {
  */
 fun squareSequenceDigit(n: Int): Int {
     var i = 1
-    var i2: BigInteger
-    var ii2: BigInteger
+    var i2: Int
+    var ii2: Int
     var j = 1
     var x = n
     if (x == 1) return 1 else x -= 1
     while (x > 0) {
         i++
-        i2 = (i * i).toBigInteger()
+        i2 = i * i
         j = 0
-        while (i2 > 0.toBigInteger()) {
-            i2 /= 10.toBigInteger()
+        while (i2 > 0) {
+            i2 /= 10
             j++
         }
         if (x > j) x -= j else {
-            ii2 = (i * i).toBigInteger()
-            while (ii2 > 0.toBigInteger()) {
-                i2 = i2 * 10.toBigInteger() + ii2 % 10.toBigInteger()
-                ii2 /= 10.toBigInteger()
+            ii2 = i * i
+            while (ii2 > 0) {
+                i2 = i2 * 10 + ii2 % 10
+                ii2 /= 10
             }
             while (x > 0) {
-                j = (i2 % 10.toBigInteger()).toInt()
-                i2 /= 10.toBigInteger()
+                j = i2 % 10
+                i2 /= 10
                 x--
             }
         }
