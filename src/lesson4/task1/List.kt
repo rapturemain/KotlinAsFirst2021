@@ -353,7 +353,7 @@ fun russian(n: Int): String {
         tens = l3[n / 10 % 10]
         units = l1[n % 10]
     }
-    if (n / 1000 % 100 in 10..20) {
+    if (n / 1000 % 100 in 10..19) {
         tens2 = l2[n / 1000 % 10]
         units2 = ""
     } else {
@@ -367,7 +367,7 @@ fun russian(n: Int): String {
     val thousands = when {
         hundreds2.isEmpty() && tens2.isEmpty() && units2.isEmpty() -> ""
         units2 == " одна" -> " тысяча"
-        n / 1000 % 10 in (2..4) -> " тысячи"
+        (n / 1000 % 10 in (2..4)) && (n / 1000 % 100 !in (10..19)) -> " тысячи"
         else -> " тысяч"
     }
     return (hundreds2 + tens2 + units2 + thousands + hundreds + tens + units).trim()
