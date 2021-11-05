@@ -290,28 +290,28 @@ fun cos(x: Double, eps: Double): Double {
  */
 fun squareSequenceDigit(n: Int): Int {
     var i = 1
-    var i2: Int
-    var ii2: Int
+    var i2: BigInteger
+    var ii2: BigInteger
     var j = 1
     var x = n
     if (x == 1) return 1 else x -= 1
     while (x > 0) {
         i++
-        i2 = i * i
+        i2 = (i * i).toBigInteger()
         j = 0
-        while (i2 > 0) {
-            i2 /= 10
+        while (i2 > 0.toBigInteger()) {
+            i2 /= 10.toBigInteger()
             j++
         }
         if (x > j) x -= j else {
-            ii2 = i * i
-            while (ii2 > 0) {
-                i2 = i2 * 10 + ii2 % 10
-                ii2 /= 10
+            ii2 = (i * i).toBigInteger()
+            while (ii2 > 0.toBigInteger()) {
+                i2 = i2 * 10.toBigInteger() + ii2 % 10.toBigInteger()
+                ii2 /= 10.toBigInteger()
             }
             while (x > 0) {
-                j = i2 % 10
-                i2 /= 10
+                j = (i2 % 10.toBigInteger()).toInt()
+                i2 /= 10.toBigInteger()
                 x--
             }
         }
