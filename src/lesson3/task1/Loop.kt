@@ -4,6 +4,7 @@ package lesson3.task1
 
 import java.math.BigDecimal
 import java.math.BigInteger
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 // Урок 3: циклы
@@ -112,13 +113,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    if (n % 2 == 0) return n / 2
-    for (i in 3..sqrt(n.toDouble()).toInt() step 2) {
-        if (n % i == 0) return n / i
-    }
-    return 1
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая (2 балла)
@@ -199,15 +194,7 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean {
-    var number = n
-    var reversedNumber = 0
-    while (number > 0) {
-        reversedNumber = reversedNumber * 10 + number % 10
-        number /= 10
-    }
-    return n == reversedNumber
-}
+fun isPalindrome(n: Int): Boolean = n == revert(n)
 
 /**
  * Средняя (3 балла)
@@ -289,34 +276,17 @@ fun cos(x: Double, eps: Double): Double {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-    var i = 1
-    var i2: BigInteger
-    var ii2: BigInteger
-    var j = 1
-    var x = n
-    if (x == 1) return 1 else x -= 1
-    while (x > 0) {
-        i++
-        i2 = (i * i).toBigInteger()
-        j = 0
-        while (i2 > 0.toBigInteger()) {
-            i2 /= 10.toBigInteger()
-            j++
-        }
-        if (x > j) x -= j else {
-            ii2 = (i * i).toBigInteger()
-            while (ii2 > 0.toBigInteger()) {
-                i2 = i2 * 10.toBigInteger() + ii2 % 10.toBigInteger()
-                ii2 /= 10.toBigInteger()
-            }
-            while (x > 0) {
-                j = (i2 % 10.toBigInteger()).toInt()
-                i2 /= 10.toBigInteger()
-                x--
-            }
+    var x = 0
+    var s = 0
+    for (i in 1..n) {
+        val ii = i * i
+        s += digitNumber(ii)
+        if (s >= n) {
+            x = ii / (10.0.pow(s - n)).toInt() % 10
+            break
         }
     }
-    return j
+    return x
 }
 
 /**
@@ -329,32 +299,20 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var a: BigInteger = BigInteger.valueOf(1)
-    var b: BigInteger = BigInteger.valueOf(1)
-    var c: BigInteger
-    var x = n
-    var i = 0
-    if (x < 3) return 1 else x -= 2
-    while (x > 0) {
-        c = a + b
-        a = b
-        b = c
-        i = 0
-        while (c > 0.toBigInteger()) {
-            c /= 10.toBigInteger()
-            i++
-        }
-        if (x > i) x -= i else {
-            while (b > 0.toBigInteger()) {
-                c = c * 10.toBigInteger() + b % 10.toBigInteger()
-                b /= 10.toBigInteger()
-            }
-            while (x > 0) {
-                i = (c % 10.toBigInteger()).toInt()
-                c /= 10.toBigInteger()
-                x --
-            }
+    var x = 0
+    var s = 2
+    var f = 1
+    var f2 = 1
+    if (n <= 2) return 1
+    while (n > s) {
+        val f1 = f
+        f += f2
+        f2 = f1
+        s += digitNumber(f)
+        if (s >= n) {
+            x = f / (10.0.pow(s - n)).toInt() % 10
+            break
         }
     }
-    return i
+    return x
 }

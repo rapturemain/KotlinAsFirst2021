@@ -171,7 +171,11 @@ fun times(a: List<Int>, b: List<Int>): Int {
  */
 fun polynom(p: List<Int>, x: Int): Int {
     var s = 0
-    for (i in p.indices) s += p[i] * x.toDouble().pow(i).toInt()
+    var xx = 1
+    for (i in p) {
+        s += i * xx
+        xx *= x
+    }
     return s
 }
 
@@ -211,7 +215,7 @@ fun factorize(n: Int): List<Int> {
             x /= i
         } else i++
     }
-    return list.toList()
+    return list
 }
 
 /**
@@ -249,7 +253,7 @@ fun convert(n: Int, base: Int): List<Int> {
         list.add(x % base)
         x /= base
     }
-    return list.toList().reversed()
+    return list.reversed()
 }
 
 /**
@@ -285,7 +289,11 @@ fun convertToString(n: Int, base: Int): String {
 fun decimal(digits: List<Int>, base: Int): Int {
     var s = 0
     val l = digits.reversed()
-    for (i in l.indices) s += l[i] * base.toDouble().pow(i).toInt()
+    var j = 1
+    for (i in l) {
+        s += i * j
+        j *= base
+    }
     return s
 }
 
@@ -302,10 +310,14 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * (например, str.toInt(base)), запрещается.
  */
 fun decimalFromString(str: String, base: Int): Int {
-    val l = "0123456789abcdefghijklmnopqrstuvwxyz"
     val s = str.reversed()
     var n = 0
-    for (c in s.indices) n += l.indexOf(s[c]).toInt() * base.toDouble().pow(c).toInt()
+    var b = 1
+    for (c in s) {
+        val j = if(c.isDigit()) c.toString().toInt() else c - 'a' + 10
+        n += b * j
+        b *= base
+    }
     return n
 }
 
