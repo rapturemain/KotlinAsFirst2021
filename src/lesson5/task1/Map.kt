@@ -135,7 +135,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * В выходном списке не должно быть повторяющихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.intersect(b).toList()
 
 /**
  * Средняя (3 балла)
@@ -166,7 +166,23 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *   averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0))
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
-fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> = TODO()
+fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
+    val l1 = mutableMapOf<String, Double>()
+    val l2 = mutableMapOf<String, Int>()
+    for ((name, cost) in stockPrices) {
+        if (!l1.containsKey(name)) {
+            l1[name] = cost
+            l2[name] = 1
+        } else {
+            l1[name] = l1.getValue(name) + cost
+            l2[name] = l2.getValue(name) + 1
+        }
+    }
+    for ((name, cost) in l1) {
+        l1[name] = cost / l2.getValue(name)
+    }
+    return l1
+}
 
 /**
  * Средняя (4 балла)
@@ -194,7 +210,8 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
+fun canBuildFrom(chars: List<Char>, word: String): Boolean =
+    chars.joinToString(transform = { it.lowercase() }).toList().containsAll(word.lowercase().toList())
 
 /**
  * Средняя (4 балла)
@@ -208,7 +225,13 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
+fun extractRepeats(list: List<String>): Map<String, Int> {
+    val l = mutableMapOf<String, Int>()
+    for (i in list) {
+        l[i] = list.count { it == i }
+    }
+    return l.filterValues { it > 1 }
+}
 
 /**
  * Средняя (3 балла)

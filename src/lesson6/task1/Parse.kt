@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import java.lang.StringBuilder
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -102,7 +104,18 @@ fun dateDigitToStr(digital: String): String = TODO()
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    val s = StringBuilder()
+    for (c in phone) if (!c.isDigit() && c !in "+- ()") return "" else if (c.isDigit() || c in "()") s.append(c)
+    if ('(' in s) if (s.substring(s.indexOf('(') + 1, s.indexOf(')')).isEmpty()) return ""
+    return phone.filter { it.isDigit() || it == '+' }
+
+
+    /* var s = phone.filter { it in "0123456789()"}
+    if ('(' in s) if (s.substring(s.indexOf('(') + 1, s.indexOf(')')).isEmpty()) return ""
+    s = s.filter { it.isDigit() }
+    return if (phone.startsWith("+")) "+$s" else s */
+}
 
 /**
  * Средняя (5 баллов)
@@ -114,7 +127,12 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    for (c in jumps) if (!c.isDigit() && c !in "-% ") return -1
+    val l = jumps.split(' ').filter { it.toIntOrNull() != null }.map { it.toInt() }
+    if (l.isEmpty()) return -1
+    return l.maxOrNull()!!
+}
 
 /**
  * Сложная (6 баллов)
