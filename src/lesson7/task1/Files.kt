@@ -290,15 +290,15 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  *
  * Соответствующий выходной файл:
 <html>
-    <body>
-        <p>
-            Lorem ipsum <i>dolor sit amet</i>, consectetur <b>adipiscing</b> elit.
-            Vestibulum lobortis. <s>Est vehicula rutrum <i>suscipit</i></s>, ipsum <s>lib</s>ero <i>placerat <b>tortor</b></i>.
-        </p>
-        <p>
-            Suspendisse <s>et elit in enim tempus iaculis</s>.
-        </p>
-    </body>
+<body>
+<p>
+Lorem ipsum <i>dolor sit amet</i>, consectetur <b>adipiscing</b> elit.
+Vestibulum lobortis. <s>Est vehicula rutrum <i>suscipit</i></s>, ipsum <s>lib</s>ero <i>placerat <b>tortor</b></i>.
+</p>
+<p>
+Suspendisse <s>et elit in enim tempus iaculis</s>.
+</p>
+</body>
 </html>
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
@@ -405,7 +405,47 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlLists(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    writer.write("<html><body><p>")
+
+    val indentations = File(inputName).readLines().map {
+        val firstPart = if (it.trim().substringBefore(" ")[0].isDigit()) "ol" else "ul"
+        val secondPart = it.trim().substringAfter(" ").trim()
+        it.substringBefore(it.trim()).length / 4 to (firstPart to secondPart)
+    }
+
+    val levels = Array(7) { "" }
+    var numberOld = 0
+    var kindOld = ""
+
+    for ((indent, line) in indentations) {
+        val kind = line.first
+
+        if (indent <= numberOld && kindOld != "") writer.write("</li>")
+
+        if (levels[indent + 1].isNotEmpty()) {
+            writer.write("</${levels[indent + 1]}></li>")
+            levels[indent + 1] = ""
+        }
+        if (levels[indent] != kind) {
+            if (levels[indent].isNotEmpty()) writer.write("</${levels[indent]}>")
+            writer.write("<${kind}>")
+            levels[indent] = kind
+        }
+
+        writer.write("<li>${line.second}")
+        numberOld = indent
+        kindOld = kind
+
+    }
+    for (line in levels.reversedArray()) {
+        if (line.isNotEmpty()) {
+            writer.write("</li></${line}>")
+        }
+    }
+
+    writer.write("</p></body></html>")
+    writer.close()
 }
 
 /**
@@ -426,23 +466,23 @@ fun markdownToHtml(inputName: String, outputName: String) {
  * Вывести в выходной файл процесс умножения столбиком числа lhv (> 0) на число rhv (> 0).
  *
  * Пример (для lhv == 19935, rhv == 111):
-   19935
-*    111
+19935
+ *    111
 --------
-   19935
+19935
 + 19935
 +19935
 --------
- 2212785
+2212785
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  * Нули в множителе обрабатывать так же, как и остальные цифры:
-  235
-*  10
+235
+ *  10
 -----
-    0
+0
 +235
 -----
- 2350
+2350
  *
  */
 fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
@@ -456,21 +496,65 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  * Вывести в выходной файл процесс деления столбиком числа lhv (> 0) на число rhv (> 0).
  *
  * Пример (для lhv == 19935, rhv == 22):
-  19935 | 22
- -198     906
- ----
-    13
-    -0
-    --
-    135
-   -132
-   ----
-      3
+19935 | 22
+-198     906
+----
+13
+-0
+--
+135
+-132
+----
+3
 
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  *
  */
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val startLine = " $lhv | $rhv"
+    writer.write(startLine)
+    writer.newLine()
+    val digitsMain = lhv.toString().map { it.digitToInt() }
+    var number = 0
+    for (i in digitsMain) {
+        number = number * 10 + i
+        if (number / rhv > 0) break
+    }
+    var divisor = (number / rhv) * rhv
+    val startLen = startLine.substringBefore("|").length + 2 - "-$divisor".length
+    val secondStartLine = "-$divisor" + " ".repeat(startLen) + "${lhv / rhv}"
+    writer.write(secondStartLine)
+    writer.newLine()
+    writer.write("-".repeat(number.toString().length + 1))
+    writer.newLine()
+
+    val digitsRest = digitsMain.subList(number.toString().length, digitsMain.size)
+    var rest = number - divisor
+    var firstLine: String
+    var secondLine = "-$divisor"
+
+    for (digitNew in digitsRest) {
+        val firstLineLen = secondLine.length - rest.toString().length
+        firstLine = " ".repeat(firstLineLen) + rest.toString() + digitNew.toString()
+
+        number = firstLine.trim().toInt()
+        rest = number % rhv
+        divisor = number - rest
+        val divisorLen = divisor.toString().length
+
+        val secondLineLen = firstLine.length - divisorLen - 1
+        secondLine = " ".repeat(secondLineLen) + "-$divisor"
+
+        writer.write(firstLine)
+        writer.newLine()
+        writer.write(secondLine)
+        writer.newLine()
+        writer.write(" ".repeat(secondLineLen) + "-".repeat(divisorLen + 1))
+        writer.newLine()
+    }
+    val spacingFinal = secondLine.length - rest.toString().length
+    writer.write(" ".repeat(spacingFinal) + rest.toString())
+    writer.close()
 }
 

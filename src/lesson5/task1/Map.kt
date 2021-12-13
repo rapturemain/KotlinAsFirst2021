@@ -300,7 +300,15 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    for (i in list.indices) {
+        if (number - list[i] in list && i != list.indexOf(number - list[i])) {
+            val n = list.indexOf(number - list[i])
+            return Pair(minOf(i, n), maxOf(i, n))
+        }
+    }
+    return Pair(-1, -1)
+}
 
 /**
  * Очень сложная (8 баллов)
@@ -323,4 +331,39 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val treasuresFiltered = treasures.filterValues { it.first <= capacity }
+    if (treasuresFiltered.isEmpty()) return emptySet()
+
+    val allWeights = listOf(treasuresFiltered.values.first().first)
+    val allCosts = listOf(treasuresFiltered.values.first().second)
+    val totalTreasures = treasuresFiltered.size
+    val bagTable = Array(totalTreasures + 1) { Array(capacity + 1) { 0 } }
+
+    for (i in 0..totalTreasures) {
+        for (j in 0..capacity) {
+            if (i == 0 || j == 0) bagTable[i][j] = 0
+            else if (allWeights[i - 1] <= j) bagTable[i][j] =
+                (allCosts[i - 1] + bagTable[i - 1][j - allWeights[i - 1]]).coerceAtLeast(bagTable[i - 1][j])
+            else bagTable[i][j] = bagTable[i - 1][j]
+        }
+    }
+
+    var totalWeight = bagTable[totalTreasures][capacity]
+    var cost = capacity
+    val bag = mutableSetOf<String>()
+
+    for (weight in totalTreasures downTo 0) {
+        if (totalWeight <= 0) break
+        if (totalWeight == bagTable[weight - 1][cost]) continue
+        else {
+            val searchPair = (allWeights[weight - 1] to allCosts[weight - 1])
+            for ((key, value) in treasuresFiltered) {
+                if (value == searchPair) bag.add(key)
+            }
+            totalWeight -= allCosts[weight - 1]
+            cost -= allWeights[weight - 1]
+        }
+    }
+    return bag
+}

@@ -2,8 +2,6 @@
 
 package lesson6.task1
 
-import java.lang.StringBuilder
-
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -105,16 +103,17 @@ fun dateDigitToStr(digital: String): String = TODO()
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String {
-    val s = StringBuilder()
-    for (c in phone) if (!c.isDigit() && c !in "+- ()") return "" else if (c.isDigit() || c in "()") s.append(c)
-    if ('(' in s) if (s.substring(s.indexOf('(') + 1, s.indexOf(')')).isEmpty()) return ""
+    val s = buildString {
+        for (c in phone) {
+            if (!c.isDigit() && c !in "+- ()") return ""
+            if (c.isDigit() || c in "()") append(c)
+        }
+    }
+    if ('(' in s) {
+        val subS = s.substring(s.indexOf('(') + 1, s.indexOf(')'))
+        if (subS.isEmpty()) return ""
+    }
     return phone.filter { it.isDigit() || it == '+' }
-
-
-    /* var s = phone.filter { it in "0123456789()"}
-    if ('(' in s) if (s.substring(s.indexOf('(') + 1, s.indexOf(')')).isEmpty()) return ""
-    s = s.filter { it.isDigit() }
-    return if (phone.startsWith("+")) "+$s" else s */
 }
 
 /**
@@ -130,8 +129,7 @@ fun flattenPhoneNumber(phone: String): String {
 fun bestLongJump(jumps: String): Int {
     for (c in jumps) if (!c.isDigit() && c !in "-% ") return -1
     val l = jumps.split(' ').filter { it.toIntOrNull() != null }.map { it.toInt() }
-    if (l.isEmpty()) return -1
-    return l.maxOrNull()!!
+    return l.maxOrNull() ?: -1
 }
 
 /**
@@ -167,7 +165,17 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val listOfWords = str.split(" ").zipWithNext()
+    var wordIndex = -1
+    for ((first, second) in listOfWords) {
+        if (first.lowercase() == second.lowercase()) {
+            wordIndex = str.indexOf("$first $second")
+            break
+        }
+    }
+    return wordIndex
+}
 
 /**
  * Сложная (6 баллов)
@@ -180,7 +188,30 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше нуля либо равны нулю.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    return try {
+        val shopList = description.split("; ").map {
+            it.split(" ")[0] to it.split(" ")[1].toDouble()
+        }
+        var maxCost = 0.0
+        var maxName = ""
+        for ((name, cost) in shopList) {
+            if (cost < 0.0) {
+                maxName = ""
+                break
+            }
+            if (cost > maxCost) {
+                maxCost = cost
+                maxName = name
+            }
+        }
+        maxName
+    } catch (e: IndexOutOfBoundsException) {
+        ""
+    } catch (e: NumberFormatException) {
+        ""
+    }
+}
 
 /**
  * Сложная (6 баллов)
