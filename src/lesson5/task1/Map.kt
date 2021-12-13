@@ -352,6 +352,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     var totalWeight = bagTable[totalTreasures][capacity]
     var cost = capacity
     val bag = mutableSetOf<String>()
+    var bagWeight = 0
 
     for (weight in totalTreasures downTo 0) {
         if (totalWeight <= 0) break
@@ -359,7 +360,11 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         else {
             val searchPair = (allWeights[weight - 1] to allCosts[weight - 1])
             for ((key, value) in treasuresFiltered) {
-                if (value == searchPair) bag.add(key)
+                if (value == searchPair) {
+                    bagWeight += value.first
+                    if (bagWeight > capacity) break
+                    bag.add(key)
+                }
             }
             totalWeight -= allCosts[weight - 1]
             cost -= allWeights[weight - 1]
