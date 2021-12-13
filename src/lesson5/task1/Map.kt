@@ -211,7 +211,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean =
-    chars.joinToString(transform = { it.lowercase() }).toList().containsAll(word.lowercase().toList())
+    chars.map { it.lowercase().single() }.containsAll(word.lowercase().toList())
 
 /**
  * Средняя (4 балла)
@@ -335,8 +335,8 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
     val treasuresFiltered = treasures.filterValues { it.first <= capacity }
     if (treasuresFiltered.isEmpty()) return emptySet()
 
-    val allWeights = listOf(treasuresFiltered.values.first().first)
-    val allCosts = listOf(treasuresFiltered.values.first().second)
+    val allWeights = treasuresFiltered.map { it.value.first }
+    val allCosts = treasuresFiltered.map { it.value.second }
     val totalTreasures = treasuresFiltered.size
     val bagTable = Array(totalTreasures + 1) { Array(capacity + 1) { 0 } }
 
@@ -344,7 +344,7 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         for (j in 0..capacity) {
             if (i == 0 || j == 0) bagTable[i][j] = 0
             else if (allWeights[i - 1] <= j) bagTable[i][j] =
-                (allCosts[i - 1] + bagTable[i - 1][j - allWeights[i - 1]]).coerceAtLeast(bagTable[i - 1][j])
+                maxOf(allCosts[i - 1] + bagTable[i - 1][j - allWeights[i - 1]], bagTable[i - 1][j])
             else bagTable[i][j] = bagTable[i - 1][j]
         }
     }

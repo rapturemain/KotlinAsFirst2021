@@ -200,7 +200,7 @@ fun mostExpensive(description: String): String {
                 maxName = ""
                 break
             }
-            if (cost > maxCost) {
+            if (cost >= maxCost) {
                 maxCost = cost
                 maxName = name
             }

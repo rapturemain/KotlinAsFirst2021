@@ -542,15 +542,18 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         rest = number % rhv
         divisor = number - rest
         val divisorLen = divisor.toString().length
+        val restLen = rest.toString().length - 1
 
         val secondLineLen = firstLine.length - divisorLen - 1
         secondLine = " ".repeat(secondLineLen) + "-$divisor"
+
+        val restLineLen = firstLine.length - maxOf(divisorLen, restLen) -1
 
         writer.write(firstLine)
         writer.newLine()
         writer.write(secondLine)
         writer.newLine()
-        writer.write(" ".repeat(secondLineLen) + "-".repeat(divisorLen + 1))
+        writer.write(" ".repeat(restLineLen) + "-".repeat(maxOf(divisorLen, restLen) + 1))
         writer.newLine()
     }
     val spacingFinal = secondLine.length - rest.toString().length
