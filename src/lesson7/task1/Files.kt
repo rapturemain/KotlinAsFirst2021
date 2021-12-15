@@ -243,12 +243,9 @@ fun chooseLongestChaoticWord(inputName: String, outputName: String) {
     val outputLine = StringBuilder()
     var max = 0
     File(outputName).bufferedWriter().use {
-        for (line in File(inputName).readLines()) {
+        File(inputName).forEachLine { line ->
             val line2 = line.lowercase()
-            var line3 = ""
-            for (letter in line2) {
-                if (letter !in line3) line3 += letter
-            }
+            val line3 = line2.toSet().joinToString(separator = "")
             if (line2 == line3 && line.length > max) {
                 max = line.length
                 outputLine.clear().append(line)
@@ -341,111 +338,111 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  *
  * Пример входного файла:
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
-* Утка по-пекински
-    * Утка
-    * Соус
-* Салат Оливье
-    1. Мясо
-        * Или колбаса
-    2. Майонез
-    3. Картофель
-    4. Что-то там ещё
-* Помидоры
-* Фрукты
-    1. Бананы
-    23. Яблоки
-        1. Красные
-        2. Зелёные
+ * Утка по-пекински
+ * Утка
+ * Соус
+ * Салат Оливье
+1. Мясо
+ * Или колбаса
+2. Майонез
+3. Картофель
+4. Что-то там ещё
+ * Помидоры
+ * Фрукты
+1. Бананы
+23. Яблоки
+1. Красные
+2. Зелёные
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  *
  *
  * Соответствующий выходной файл:
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
 <html>
-  <body>
-    <p>
-      <ul>
-        <li>
-          Утка по-пекински
-          <ul>
-            <li>Утка</li>
-            <li>Соус</li>
-          </ul>
-        </li>
-        <li>
-          Салат Оливье
-          <ol>
-            <li>Мясо
-              <ul>
-                <li>Или колбаса</li>
-              </ul>
-            </li>
-            <li>Майонез</li>
-            <li>Картофель</li>
-            <li>Что-то там ещё</li>
-          </ol>
-        </li>
-        <li>Помидоры</li>
-        <li>Фрукты
-          <ol>
-            <li>Бананы</li>
-            <li>Яблоки
-              <ol>
-                <li>Красные</li>
-                <li>Зелёные</li>
-              </ol>
-            </li>
-          </ol>
-        </li>
-      </ul>
-    </p>
-  </body>
+<body>
+<p>
+<ul>
+<li>
+Утка по-пекински
+<ul>
+<li>Утка</li>
+<li>Соус</li>
+</ul>
+</li>
+<li>
+Салат Оливье
+<ol>
+<li>Мясо
+<ul>
+<li>Или колбаса</li>
+</ul>
+</li>
+<li>Майонез</li>
+<li>Картофель</li>
+<li>Что-то там ещё</li>
+</ol>
+</li>
+<li>Помидоры</li>
+<li>Фрукты
+<ol>
+<li>Бананы</li>
+<li>Яблоки
+<ol>
+<li>Красные</li>
+<li>Зелёные</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+</p>
+</body>
 </html>
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlLists(inputName: String, outputName: String) {
-    val writer = File(outputName).bufferedWriter()
-    writer.write("<html><body><p>")
+    File(outputName).bufferedWriter().use { writer ->
+        writer.write("<html><body><p>")
 
-    val indentations = File(inputName).readLines().map {
-        val firstPart = if (it.trim().substringBefore(" ")[0].isDigit()) "ol" else "ul"
-        val secondPart = it.trim().substringAfter(" ").trim()
-        it.substringBefore(it.trim()).length / 4 to (firstPart to secondPart)
-    }
-
-    val levels = Array(7) { "" }
-    var numberOld = 0
-    var kindOld = ""
-
-    for ((indent, line) in indentations) {
-        val kind = line.first
-
-        if (indent <= numberOld && kindOld != "") writer.write("</li>")
-
-        if (levels[indent + 1].isNotEmpty()) {
-            writer.write("</${levels[indent + 1]}></li>")
-            levels[indent + 1] = ""
-        }
-        if (levels[indent] != kind) {
-            if (levels[indent].isNotEmpty()) writer.write("</${levels[indent]}>")
-            writer.write("<${kind}>")
-            levels[indent] = kind
+        val indentations = File(inputName).readLines().map {
+            val firstPart = if (it.trim().substringBefore(" ")[0].isDigit()) "ol" else "ul"
+            val secondPart = it.trim().substringAfter(" ").trim()
+            it.substringBefore(it.trim()).length / 4 to (firstPart to secondPart)
         }
 
-        writer.write("<li>${line.second}")
-        numberOld = indent
-        kindOld = kind
+        val levels = Array(7) { "" }
+        var numberOld = 0
+        var kindOld = ""
 
-    }
-    for (line in levels.reversedArray()) {
-        if (line.isNotEmpty()) {
-            writer.write("</li></${line}>")
+        for ((indent, line) in indentations) {
+            val kind = line.first
+
+            if (indent <= numberOld && kindOld != "") writer.write("</li>")
+
+            if (levels[indent + 1].isNotEmpty()) {
+                writer.write("</${levels[indent + 1]}></li>")
+                levels[indent + 1] = ""
+            }
+            if (levels[indent] != kind) {
+                if (levels[indent].isNotEmpty()) writer.write("</${levels[indent]}>")
+                writer.write("<${kind}>")
+                levels[indent] = kind
+            }
+
+            writer.write("<li>${line.second}")
+            numberOld = indent
+            kindOld = kind
+
         }
-    }
+        for (line in levels.reversedArray()) {
+            if (line.isNotEmpty()) {
+                writer.write("</li></${line}>")
+            }
+        }
 
-    writer.write("</p></body></html>")
-    writer.close()
+        writer.write("</p></body></html>")
+    }
 }
 
 /**
@@ -531,12 +528,11 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
 
     val digitsRest = digitsMain.subList(number.toString().length, digitsMain.size)
     var rest = number - divisor
-    var firstLine: String
     var secondLine = "-$divisor"
 
     for (digitNew in digitsRest) {
         val firstLineLen = secondLine.length - rest.toString().length
-        firstLine = " ".repeat(firstLineLen) + rest.toString() + digitNew.toString()
+        val firstLine = " ".repeat(firstLineLen) + rest.toString() + digitNew.toString()
 
         number = firstLine.trim().toInt()
         rest = number % rhv
@@ -547,7 +543,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         val secondLineLen = firstLine.length - divisorLen - 1
         secondLine = " ".repeat(secondLineLen) + "-$divisor"
 
-        val restLineLen = firstLine.length - maxOf(divisorLen, restLen) -1
+        val restLineLen = firstLine.length - maxOf(divisorLen, restLen) - 1
 
         writer.write(firstLine)
         writer.newLine()
