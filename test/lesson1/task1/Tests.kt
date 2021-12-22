@@ -105,4 +105,26 @@ class Tests {
         assertEquals(874, numberRevert(478))
         assertEquals(201, numberRevert(102))
     }
+
+    @Test
+    fun myFun() {
+        assertEquals(
+            false, myFun(
+                "НЕ X1 ИЛИ X2 ИЛИ X3", """
+            X1 = истина
+            X2 = ложь
+            X3 = ложь
+            """.trimIndent()
+            )
+        )
+        assertEquals(
+            true, myFun(
+                "X1 ИЛИ ИЛИ X2 ИЛИ X3", """
+            X1 = истина
+            X2 = ложь
+            X3 = ложь
+            """.trimIndent()
+            )
+        )
+    }
 }

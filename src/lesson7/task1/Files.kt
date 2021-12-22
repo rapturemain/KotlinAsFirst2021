@@ -508,10 +508,6 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  *
  */
 fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
-    val writer = File(outputName).bufferedWriter()
-    val startLine = " $lhv | $rhv"
-    writer.write(startLine)
-    writer.newLine()
     val digitsMain = lhv.toString().map { it.digitToInt() }
     var number = 0
     for (i in digitsMain) {
@@ -519,41 +515,63 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         if (number / rhv > 0) break
     }
     var divisor = (number / rhv) * rhv
-    val startLen = startLine.substringBefore("|").length + 2 - "-$divisor".length
-    val secondStartLine = "-$divisor" + " ".repeat(startLen) + "${lhv / rhv}"
-    writer.write(secondStartLine)
-    writer.newLine()
-    writer.write("-".repeat(number.toString().length + 1))
-    writer.newLine()
 
-    val digitsRest = digitsMain.subList(number.toString().length, digitsMain.size)
-    var rest = number - divisor
-    var secondLine = "-$divisor"
-
-    for (digitNew in digitsRest) {
-        val firstLineLen = secondLine.length - rest.toString().length
-        val firstLine = " ".repeat(firstLineLen) + rest.toString() + digitNew.toString()
-
-        number = firstLine.trim().toInt()
-        rest = number % rhv
-        divisor = number - rest
-        val divisorLen = divisor.toString().length
-        val restLen = rest.toString().length - 1
-
-        val secondLineLen = firstLine.length - divisorLen - 1
-        secondLine = " ".repeat(secondLineLen) + "-$divisor"
-
-        val restLineLen = firstLine.length - maxOf(divisorLen, restLen) - 1
-
-        writer.write(firstLine)
+    val writer = File(outputName).bufferedWriter()
+    if (divisor == 0) {
+        val startLine = if (lhv < 10) " $lhv | $rhv" else "$lhv | $rhv"
+        val lineSpace = " ".repeat(startLine.substringBefore("|").length - 3)
+        val digitLine = if (lineSpace.isEmpty()) "--" else lineSpace + "-".repeat(lhv.toString().length)
+        val restLine = if (lineSpace.isEmpty()) " $lhv" else "$lineSpace$lhv"
+        writer.write(startLine)
         writer.newLine()
-        writer.write(secondLine)
+        writer.write("$lineSpace-0   0")
         writer.newLine()
-        writer.write(" ".repeat(restLineLen) + "-".repeat(maxOf(divisorLen, restLen) + 1))
+        writer.write(digitLine)
         writer.newLine()
+        writer.write(restLine)
+        writer.newLine()
+    } else {
+        val startLine = " $lhv | $rhv"
+        writer.write(startLine)
+        writer.newLine()
+        val startLen = startLine.substringBefore("|").length + 2 - "-$divisor".length
+        val secondStartLine = "-$divisor" + " ".repeat(startLen) + "${lhv / rhv}"
+        writer.write(secondStartLine)
+        writer.newLine()
+        writer.write("-".repeat(number.toString().length + 1))
+        writer.newLine()
+
+        val digitsRest = digitsMain.subList(number.toString().length, digitsMain.size)
+        var rest = number - divisor
+        var secondLine = "-$divisor"
+
+        for (digitNew in digitsRest) {
+            val firstLineLen = secondLine.length - rest.toString().length
+            val firstLine = " ".repeat(firstLineLen) + rest.toString() + digitNew.toString()
+
+            number = firstLine.trim().toInt()
+            rest = number % rhv
+            divisor = number - rest
+            val divisorLen = divisor.toString().length
+            val restLen = rest.toString().length - 1
+
+            val secondLineLen = firstLine.length - divisorLen - 1
+            secondLine = " ".repeat(secondLineLen) + "-$divisor"
+
+            val restLineLen = firstLine.length - maxOf(divisorLen, restLen) - 1
+
+            writer.write(firstLine)
+            writer.newLine()
+            writer.write(secondLine)
+            writer.newLine()
+            writer.write(" ".repeat(restLineLen) + "-".repeat(maxOf(divisorLen, restLen) + 1))
+            writer.newLine()
+        }
+        val sll = secondLine.length
+        val rl = rest.toString().length
+        val spacingFinal = if (sll > rl) sll - rl else 0
+        writer.write(" ".repeat(spacingFinal) + rest.toString())
     }
-    val spacingFinal = secondLine.length - rest.toString().length
-    writer.write(" ".repeat(spacingFinal) + rest.toString())
     writer.close()
 }
 

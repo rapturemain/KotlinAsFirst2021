@@ -127,3 +127,68 @@ fun accountInThreeYears(initial: Int, percent: Int): Double = initial * (1.0 + p
  * Необходимо вывести число, полученное из заданного перестановкой цифр в обратном порядке (например, 874).
  */
 fun numberRevert(number: Int): Int = (number % 10) * 100 + (number / 10 % 10) * 10 + number / 100
+
+
+/**
+ * В строке expr содержится логическое выражение, использующее
+ * операции НЕ и ИЛИ:
+ *
+ * НЕ X1 ИЛИ X2 ИЛИ X3
+ *
+ * Выражение не может иметь скобок, у операции НЕ приоритет выше,
+ * чем у ИЛИ
+ *
+ * Также в строке vars подаются значения переменных, например:
+ * X1 = истина
+ * X2 = ложь
+ * X3 = ложь
+ *
+ * Из функции необходимо вернуть значение логического выражения с
+ * подставленными переменными, для примера результат будет ЛОЖЬ
+ *
+ * При нарушении формата следует выбросить IllegalArgumentException
+ *
+ * Кроме функции, следует написать тесты,
+ * подтверждающие её работоспособность.
+ */
+
+fun myFun(expr: String, vars: String): Any {
+    val l = expr.split(" ")
+    val varsValues = vars.split("\n")
+        .map { it.split(" = ") }.associate { Pair(it[0], it[1] == "истина") }
+
+    val pattern = Regex("""^(НЕ?X\d+)(\sНЕ?X\d+)*""")
+    //\s(истина|ложь)
+    /* println(pattern.matchEntire(expr))
+
+    var s = ""
+    for (i in l) {
+        val s2 = if (i in listOf("НЕ", "ИЛИ")) "oper" else "digit"
+        if (s == s2) throw IllegalArgumentException()
+        s = s2
+    } */
+
+    var x = true
+    var answer = true
+    var flagOfNot = false
+    var firstFlag = false
+
+    for (i in l) {
+        when (i) {
+            "НЕ" -> flagOfNot = true
+            "ИЛИ" -> answer = answer || x
+            else -> {
+                if (!flagOfNot) x = varsValues[i]!! else {
+                    x = !varsValues[i]!!
+                    flagOfNot = false
+                }
+                if (!firstFlag) {
+                    answer = x
+                    firstFlag = true
+                }
+            }
+        }
+    }
+    return answer
+}
+
