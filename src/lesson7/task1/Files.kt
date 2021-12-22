@@ -519,17 +519,14 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     if (divisor == 0) {
         val startLine = if (lhv < 10) " $lhv | $rhv" else "$lhv | $rhv"
-        val lineSpace = " ".repeat(startLine.substringBefore("|").length - 3)
-        val digitLine = if (lineSpace.isEmpty()) "--" else lineSpace + "-".repeat(lhv.toString().length)
-        val restLine = if (lineSpace.isEmpty()) " $lhv" else "$lineSpace$lhv"
+        val startSpace = startLine.substringBefore(" |").length
         writer.write(startLine)
         writer.newLine()
-        writer.write("$lineSpace-0   0")
+        writer.write(" ".repeat(startSpace - 2) + "-0   0")
         writer.newLine()
-        writer.write(digitLine)
+        writer.write("-".repeat(startSpace))
         writer.newLine()
-        writer.write(restLine)
-        writer.newLine()
+        writer.write(startLine.substringBefore(" |"))
     } else {
         val startLine = " $lhv | $rhv"
         writer.write(startLine)
