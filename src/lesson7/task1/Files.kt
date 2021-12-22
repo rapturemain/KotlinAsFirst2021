@@ -529,7 +529,7 @@ fun printDivisionProcess(lhv: Int, rhv: Int, outputName: String) {
         writer.write(startLine.substringBefore(" |"))
     } else {
         val ans = lhv / rhv
-        val startSpace = if (ans < 10 && lhv.toString().length > ans.toString().length) "" else " "
+        val startSpace = if (ans < 10 && lhv.toString().length > divisor.toString().length) "" else " "
         val startLine = "$startSpace$lhv | $rhv"
         writer.write(startLine)
         writer.newLine()
