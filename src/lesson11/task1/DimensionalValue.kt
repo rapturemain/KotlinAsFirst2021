@@ -17,15 +17,23 @@ package lesson11.task1
  * - во всех остальных случаях следует бросить IllegalArgumentException
  */
 class DimensionalValue(value: Double, dimension: String) : Comparable<DimensionalValue> {
+
+    private val dimensionMap = Dimension.values().associate { it.abbreviation to it.name }
+
     /**
      * Величина с БАЗОВОЙ размерностью (например для 1.0Kg следует вернуть результат в граммах -- 1000.0)
      */
-    val value: Double get() = TODO()
+    val value: Double get() = this.value
 
     /**
      * БАЗОВАЯ размерность (опять-таки для 1.0Kg следует вернуть GRAM)
      */
-    val dimension: Dimension get() = TODO()
+    val dimension: Dimension
+        get() = when (this.dimension.toString().length) {
+            1 -> Dimension.valueOf(dimensionMap[this.toString()]!!)
+            2 -> Dimension.valueOf(dimensionMap[this.toString()[1].toString()]!!)
+            else -> throw IllegalArgumentException()
+        }
 
     /**
      * Конструктор из строки. Формат строки: значение пробел размерность (1 Kg, 3 mm, 100 g и так далее).
@@ -80,6 +88,10 @@ class DimensionalValue(value: Double, dimension: String) : Comparable<Dimensiona
 enum class Dimension(val abbreviation: String) {
     METER("m"),
     GRAM("g");
+
+    fun qq() {
+        val l = Dimension.values().associate { it.abbreviation to it.name }
+    }
 }
 
 /**
@@ -88,4 +100,11 @@ enum class Dimension(val abbreviation: String) {
 enum class DimensionPrefix(val abbreviation: String, val multiplier: Double) {
     KILO("K", 1000.0),
     MILLI("m", 0.001);
+}
+
+fun main() {
+    val qq = DimensionalValue(1.0, "Kg")
+    //println(qq.value)
+    println(qq.dimension)
+    //for (i in Dimension.values()) println(i)
 }
