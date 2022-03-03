@@ -20,18 +20,21 @@ class DimensionalValue(value: Double, dimension: String) : Comparable<Dimensiona
 
     private val dimensionMap = Dimension.values().associate { it.abbreviation to it.name }
 
+    val q1 = value
+    val q2 = dimension
+
     /**
      * Величина с БАЗОВОЙ размерностью (например для 1.0Kg следует вернуть результат в граммах -- 1000.0)
      */
-    val value: Double get() = this.value
+    val value: Double get() = q1
 
     /**
      * БАЗОВАЯ размерность (опять-таки для 1.0Kg следует вернуть GRAM)
      */
     val dimension: Dimension
-        get() = when (this.dimension.toString().length) {
-            1 -> Dimension.valueOf(dimensionMap[this.toString()]!!)
-            2 -> Dimension.valueOf(dimensionMap[this.toString()[1].toString()]!!)
+        get() = when (q2.toString().length) {
+            1 -> Dimension.valueOf(dimensionMap[q2.toString()]!!)
+            2 -> Dimension.valueOf(dimensionMap[q2.toString()[1].toString()]!!)
             else -> throw IllegalArgumentException()
         }
 
