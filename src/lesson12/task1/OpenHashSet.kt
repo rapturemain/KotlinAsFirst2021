@@ -17,6 +17,8 @@ package lesson12.task1
  */
 class OpenHashSet<T>(val capacity: Int) {
 
+    private fun hc(e: T): Int = e.hashCode().mod(capacity)
+
     /**
      * Массив для хранения элементов хеш-таблицы
      */
@@ -26,11 +28,7 @@ class OpenHashSet<T>(val capacity: Int) {
      * Число элементов в хеш-таблице
      */
     val size: Int
-        get() {
-            var count = capacity
-            for (e in elements) if (e == null) count -= 1
-            return count
-        }
+        get() = elements.filterNotNull().size
 
     /**
      * Признак пустоты
@@ -43,10 +41,12 @@ class OpenHashSet<T>(val capacity: Int) {
      * или false, если такой элемент уже был в таблице, или превышена вместимость таблицы.
      */
     fun add(element: T): Boolean {
-        for ((i, e) in elements.withIndex()) if (e == element) return false
-        else if (e == null) {
-            elements[i] = element
-            return true
+        for (i in hc(element) until capacity) when (elements[i]) {
+            element -> return false
+            null -> {
+                elements[i] = element
+                return true
+            }
         }
         return false
     }
@@ -54,7 +54,13 @@ class OpenHashSet<T>(val capacity: Int) {
     /**
      * Проверка, входит ли заданный элемент в хеш-таблицу
      */
-    operator fun contains(element: T): Boolean = element in elements
+    operator fun contains(element: T): Boolean {
+        for (i in hc(element) until capacity) when (elements[i]) {
+            element -> return true
+            null -> return false
+        }
+        return false
+    }
 
     /**
      * Таблицы равны, если в них одинаковое количество элементов,
@@ -64,7 +70,7 @@ class OpenHashSet<T>(val capacity: Int) {
             !elements.any { it != null && it !in other.elements }
 
     override fun hashCode(): Int {
-        var result = elements.filterNotNull().hashCode()
+        var result = elements.filterNotNull().toSet().hashCode()
         result = 31 * result + size
         return result
     }
